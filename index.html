@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+      
+  <meta charset="UTF-8">
+      
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Drag in js</title>
+</head>
+<style>
+  .wrap {
+    flex: 1;
+  }
+
+  .container {
+    width:80%;
+    height: 80%;
+    background-color: green;
+    margin-left: 10%;
+    margin-top: 10%;
+  }
+
+  .drag {
+    width: 100;
+    height: 100px;
+    background-color: red;
+  }
+</style>
+
+<body>
+  <div class="wrap">
+    <div class="container">
+      <div class="drag"  ></div>
+    </div>
+  </div>
+      
+  <script>
+    const drag = document.querySelector(".drag");
+    const ballBounder = document.querySelector(".container");
+    const containerStyleWidth = ballBounder.clientWidth;
+    const containerStyleHeight = ballBounder.clientHeight;
+
+    const dragWidth = drag.clientWidth;
+    const dragHeight = drag.clientHeight;
+
+    drag.onmousedown = function (event) {
+      const newEvent=event||window.event;//compatible with IE
+
+      //initial position
+      let shiftX = newEvent.clientX - drag.getBoundingClientRect().left;
+      let shiftY = newEvent.clientY - drag.getBoundingClientRect().top;
+
+      drag.style.position = 'absolute';
+      drag.style.zIndex = 1000;
+      document.body.append(drag);
+      moveAt(newEvent.pageX, newEvent.pageY);
+
+
+      function moveAt(pageX, pageY) {
+        const newBallLeft = pageX - shiftX;
+        const newBallTop = pageY - shiftY;
+        //left&&right
+        if (newBallLeft < ballBounder.offsetLeft ||newBallLeft > ballBounder.offsetLeft + containerStyleWidth - dragWidth) {
+          return
+        }
+
+        //top && bottom
+        if (newBallTop < ballBounder.offsetTop||newBallTop > ballBounder.offsetTop + containerStyleHeight - dragHeight) {
+          return
+        }
+
+        else {
+          drag.style.left = newBallLeft + 'px';
+          drag.style.top = newBallTop + 'px';
+        }
+      }
+
+      function onMouseMove(event) {
+        const newEvent=event||window.event;//compatible with IE
+        moveAt(newEvent.pageX, newEvent.pageY);
+      }
+
+      // mouse move
+      document.addEventListener('mousemove', onMouseMove);
+
+      // mouseup handler
+      drag.onmouseup = function () {
+        document.removeEventListener('mousemove', onMouseMove);
+        drag.onmouseup = null;
+      };
+    };
+  </script>
+</body>
+
+</html>
